@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#176b52">
+<title>FridgeGuard – Lebensmittelmanager</title>
+<style>
+:root{--g:#176b52;--pale:#e8f5ef;--ink:#17251f;--muted:#66756e;--line:#dce6e0;--bg:#f5f8f6;--surface:#fff;--red:#c83e45;--redbg:#fff0f0;--orange:#b66a0b;--orangebg:#fff4e3;--white:#fff}
+body[data-theme="dark"]{--ink:#e8eee9;--muted:#aab8af;--line:#3a4940;--bg:#17201b;--surface:#222e27;--pale:#294337;--redbg:#48292b;--orangebg:#493923}
+body[data-theme="dark"] button,body[data-theme="dark"] input,body[data-theme="dark"] select{background:#2a372f;color:var(--ink);border-color:var(--line)}body[data-theme="dark"] button.primary{background:var(--g);color:#fff}body[data-theme="dark"] .header-actions button{background:#ffffff17;color:#fff;border-color:#ffffff60}body[data-theme="dark"] .note{background:#263d30;color:#c9e4d2}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}header{background:var(--g);color:#fff;padding:20px max(16px,calc((100% - 1080px)/2));display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}.brand{display:flex;align-items:center;gap:12px}.logo{font-size:27px;background:#ffffff20;border-radius:12px;padding:8px}.brand h1{margin:0;font-size:23px}.brand p{margin:2px 0 0;color:#d5eee3;font-size:13px}.header-actions,.tabs,.toolbar,.actions,.form-actions{display:flex;gap:8px;flex-wrap:wrap}button,input,select{font:inherit}button{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:10px;padding:9px 12px;cursor:pointer;font-weight:600}button:hover{filter:brightness(.97)}button.primary{background:var(--g);color:#fff;border-color:var(--g)}button.danger{color:var(--red);border-color:#f0c8ca}button.small{padding:6px 8px;font-size:12px}.header-actions button{background:#ffffff17;color:#fff;border-color:#ffffff60}main{max-width:1080px;margin:22px auto;padding:0 15px 35px}.tabs{margin-bottom:18px}.tab{color:var(--muted)}.tab.active{background:var(--g);color:#fff;border-color:var(--g)}.panel{background:var(--surface);border:1px solid var(--line);border-radius:15px;padding:17px;margin-bottom:15px;box-shadow:0 2px 8px #10251b06}.panel h2{font-size:19px;margin:0 0 12px}.muted{color:var(--muted)}.smalltext{font-size:13px}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin-bottom:15px}.stat{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:14px}.stat .n{font-size:27px;font-weight:750}.stat .label{font-size:13px;color:var(--muted)}.stat.red .n{color:var(--red)}.stat.orange .n{color:var(--orange)}.stat.green .n{color:var(--g)}.grid2{display:grid;grid-template-columns:1.2fr .8fr;gap:15px}.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.foodrow{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #edf1ee}.foodrow:last-child{border-bottom:0}.foodicon{width:39px;height:39px;display:grid;place-items:center;background:var(--pale);border-radius:11px;font-size:21px;flex-shrink:0}.foodmain{flex:1;min-width:0}.foodmain strong{display:block}.sub{font-size:13px;color:var(--muted)}.pill{display:inline-block;padding:4px 8px;border-radius:99px;font-size:12px;font-weight:700;white-space:nowrap;margin-top:4px}.pill.red{background:var(--redbg);color:var(--red)}.pill.orange{background:var(--orangebg);color:var(--orange)}.pill.green{background:var(--pale);color:var(--g)}.pill.gray{background:#edf0ee;color:#58655f}input,select{width:100%;padding:10px;border:1px solid #cbd8d0;border-radius:9px;background:#fff;color:var(--ink)}.toolbar input,.toolbar select{min-width:150px;flex:1;width:auto}label{font-size:13px;font-weight:650;display:block;margin-bottom:5px}.formgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.formgrid .wide{grid-column:span 2}.form-actions{margin-top:13px}.empty{padding:22px 10px;text-align:center;color:var(--muted);font-size:14px}.note{background:#f0f7f3;border-radius:10px;padding:11px 12px;color:#315e4b;font-size:13px;margin-bottom:13px}.checkrow{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #edf1ee}.checkrow:last-child{border-bottom:0}.checkrow input{width:18px;height:18px;flex:none}.checkrow .itemtext{flex:1}.checkrow.done .itemtext{text-decoration:line-through;color:var(--muted)}.hidden{display:none!important}.footer{text-align:center;color:var(--muted);font-size:12px;margin-top:20px}@media(max-width:700px){header{padding:17px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.grid2{grid-template-columns:1fr}.formgrid{grid-template-columns:1fr 1fr}.formgrid .wide{grid-column:span 2}.panel{padding:14px}.foodrow{align-items:flex-start}.foodrow .actions{flex-direction:column}.pill{font-size:11px}}@media(max-width:420px){.formgrid{grid-template-columns:1fr}.formgrid .wide{grid-column:auto}.brand h1{font-size:20px}}
+</style>
+</head>
+<body>
+<header><div class="brand"><div class="logo">🥬</div><div><h1>FoodGuard</h1><p>Dein Kühlschrank. Dein Überblick. Weniger Verschwendung.</p></div></div><div class="header-actions"><button id="exportBtn">Daten exportieren</button><button id="resetBtn">Zurücksetzen</button></div></header>
+<main>
+<nav class="tabs"><button class="tab active" data-tab="dashboard">🏠 Übersicht</button><button class="tab" data-tab="inventory">📦 Inventar</button><button class="tab" data-tab="shopping">🛒 Einkaufsliste <span id="shoppingCount"></span></button><button class="tab" data-tab="catalog">🥫 Produktliste</button><button class="tab" data-tab="settings">⚙️ Einstellungen</button></nav>
+<section id="dashboard" class="view">
+<div class="stats"><div class="stat"><div class="n" id="statTotal">0</div><div class="label">Inventareinträge</div></div><div class="stat red"><div class="n" id="statRed">0</div><div class="label">Heute / überfällig</div></div><div class="stat orange"><div class="n" id="statOrange">0</div><div class="label">Bald verbrauchen</div></div><div class="stat green"><div class="n" id="statShopping">0</div><div class="label">Offene Einkäufe</div></div></div>
+<div class="grid2"><div class="panel"><div class="row"><h2>⏰ Als Nächstes verbrauchen</h2><button class="small" data-goto="inventory">Inventar öffnen</button></div><div id="priorityList"></div></div><div class="panel"><h2>🛒 Einkaufsliste</h2><div id="dashboardShopping"></div><button class="primary" data-goto="shopping" style="margin-top:12px;width:100%">Einkaufsliste öffnen</button></div></div>
+<div class="panel"><h2>💡 Schnellstart</h2><p class="muted">Deine 12 Lebensmittel sind als Starterbestand angelegt. Trage die tatsächlichen Mengen und Haltbarkeitsdaten ein. Bis ein Datum eingetragen ist, zeigt FridgeGuard bewusst keine erfundene Ablaufwarnung an.</p><button class="primary" data-goto="inventory">Inventar vervollständigen</button></div>
+</section>
+<section id="inventory" class="view hidden"><div class="panel"><div class="row"><div><h2>📦 Inventar</h2><div class="muted smalltext">Jeder Eintrag ist eine Packung oder Charge mit eigenem Datum.</div></div><button class="primary" id="newStockBtn">+ Lebensmittel</button></div><div class="toolbar" style="margin-top:14px"><input id="inventorySearch" placeholder="Lebensmittel suchen …"><select id="inventoryFilter"><option value="all">Alle Einträge</option><option value="missing">Datum fehlt</option><option value="red">Heute / überfällig</option><option value="orange">Bald verbrauchen</option><option value="green">Noch ausreichend Zeit</option></select></div><div class="row" style="margin-top:12px;align-items:center;flex-wrap:wrap"><label style="display:flex;align-items:center;gap:7px;margin:0;font-size:14px"><input id="selectAllStock" type="checkbox" style="width:18px;height:18px"> Alle sichtbaren auswählen</label><button class="primary" id="bulkConsumeBtn" type="button" disabled>− Menge für Auswahl ändern</button></div><div id="inventoryList"></div></div>
+<div class="panel hidden" id="stockFormPanel"><h2 id="stockFormTitle">Lebensmittel hinzufügen</h2><form id="stockForm"><div class="formgrid"><div class="wide"><label for="stockName">Lebensmittel</label><input id="stockName" list="productNames" required placeholder="z. B. Milch"><datalist id="productNames"></datalist></div><div><label for="stockQty">Menge</label><input id="stockQty" type="number" min="0.01" step="any" value="1" required></div><div><label for="stockUnit">Einheit</label><select id="stockUnit"><option>Stück</option><option>Packung</option><option>g</option><option>kg</option><option>ml</option><option>l</option></select></div><div><label for="stockExpiry">MHD-/Verbrauchsdatum</label><input id="stockExpiry" type="date"></div><div><label for="stockAdded">Eingelagert am</label><input id="stockAdded" type="date" required></div><div class="wide"><label for="stockNote">Notiz (optional)</label><input id="stockNote" placeholder="z. B. geöffnet, obere Ablage"></div></div><div class="form-actions"><button class="primary" type="submit">Speichern</button><button type="button" id="cancelStockBtn">Abbrechen</button></div></form></div>
+<div class="panel"><div class="row"><div><h2>🧾 Verbrauchsprotokoll</h2><div class="muted smalltext">Hier siehst du, welche Lebensmittel du zuletzt verbraucht hast und in welcher Menge.</div></div><button class="small danger" id="clearConsumptionLogBtn" type="button">Protokoll leeren</button></div><div id="consumptionLogList"></div></div></section>
+<section id="shopping" class="view hidden"><div class="panel"><div class="row"><div><h2>🛒 Einkaufsliste</h2><div class="muted smalltext">Hake ab, was du gekauft hast.</div></div><button class="primary" id="addShoppingBtn">+ Hinzufügen</button></div><div class="toolbar" style="margin-top:14px"><input id="shoppingInput" placeholder="Produkt für Einkaufsliste …"><button id="shoppingInputBtn">Hinzufügen</button><button id="presetBtn">Standardvorräte ergänzen</button></div><div id="shoppingList"></div><div class="form-actions"><button class="danger" id="clearCheckedBtn" type="button">Erledigte entfernen</button><button class="primary" id="purchaseToStockBtn" type="button">Eingekaufte ins Inventar übernehmen</button></div></div></section>
+<section id="catalog" class="view hidden"><div class="panel"><h2>🥫 Produktliste</h2><div class="muted smalltext">Stammdaten für häufige Lebensmittel. Eigene Produkte kannst du ergänzen.</div><div class="toolbar" style="margin-top:14px"><input id="catalogInput" placeholder="Neues Produkt hinzufügen …"><button class="primary" id="catalogAddBtn">Produkt hinzufügen</button></div><div id="catalogList"></div></div></section>
+<section id="settings" class="view hidden"><div class="panel"><h2 id="settingsTitle">⚙️ Einstellungen</h2><p class="muted smalltext" id="settingsIntro">Passe das Aussehen von FridgeGuard an. Deine Auswahl wird in diesem Browser gespeichert.</p><div class="formgrid" style="margin-top:16px"><div><label for="accentSetting" id="accentLabel">Akzentfarbe</label><select id="accentSetting"><option value="green">Grün</option><option value="blue">Blau</option><option value="purple">Lila</option><option value="orange">Orange</option><option value="pink">Pink</option></select></div><div><label for="brightnessSetting" id="brightnessLabel">Helligkeit</label><input id="brightnessSetting" type="range" min="35" max="100" value="100" style="padding:10px 0"><div class="muted smalltext"><span id="brightnessValue">100%</span></div></div><div><label for="themeSetting" id="themeLabel">Darstellung</label><select id="themeSetting"><option value="light">Hell</option><option value="dark">Dunkel</option></select></div><div><label for="languageSetting" id="languageLabel">Sprache</label><select id="languageSetting"><option value="de">Deutsch</option><option value="en">English</option></select></div></div><div class="note" id="settingsNote" style="margin-top:16px">Farbe, Helligkeit und Darstellung ändern sich sofort. Die Spracheinstellung übersetzt Navigation und diesen Einstellungsbereich.</div><button id="settingsResetBtn" type="button" style="margin-top:8px">Einstellungen zurücksetzen</button></div>
+<div class="panel"><h2>🛒 Automatische Einkaufsliste</h2><p class="muted smalltext">Lege Standardlebensmittel und eine Mindestmenge fest. Sobald dein gesamter Bestand dieses Produkts auf diese Menge oder darunter sinkt, wird es automatisch zur Einkaufsliste hinzugefügt.</p>
+<form id="autoRestockForm"><div class="formgrid"><div class="wide"><label for="restockName">Standardlebensmittel</label><input id="restockName" list="productNames" required placeholder="z. B. Milch"></div><div><label for="restockQty">Mindestmenge</label><input id="restockQty" type="number" min="0" step="any" value="1" required></div><div><label for="restockUnit">Einheit</label><select id="restockUnit"><option>Stück</option><option>Packung</option><option>g</option><option>kg</option><option>ml</option><option>l</option></select></div></div><div class="form-actions"><button class="primary" id="saveRestockBtn" type="button">Mindestbestand speichern</button></div></form>
+<div id="autoRestockList"></div></div></section>
+<div class="footer">FridgeGuard-Prototyp · Daten werden lokal in diesem Browser gespeichert. Exportiere regelmäßig eine Sicherung.</div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(()=> {
+const SUPABASE_URL = 'https://skwbflawfzcsobhbmsfn.supabase.co';
+
+const SUPABASE_KEY = 'sb_publishable_H83YfNs-lV_s5WdCV7hHZQ_PSAUWHbV';
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+const starter=["Milch","Butter","Eier","Käse","Joghurt","Brot","Tomaten","Gurken","Paprika","Äpfel","Bananen","Hähnchenfleisch"];
+const icons={"milch":"🥛","butter":"🧈","ei":"🥚","eier":"🥚","kaese":"🧀","joghurt":"🥣","brot":"🍞","toast":"🍞","tomate":"🍅","tomaten":"🍅","gurke":"🥒","gurken":"🥒","paprika":"🫑","apfel":"🍎","aepfel":"🍎","banane":"🍌","bananen":"🍌","haehnchenfleisch":"🍗","kartoffel":"🥔","zwiebel":"🧅","karotte":"🥕","moehre":"🥕","möhre":"🥕","salat":"🥬","spinat":"🥬","brokkoli":"🥦","blumenkohl":"🥦","mais":"🌽","pilz":"🍄","champignon":"🍄","erdbeere":"🍓","erdbeeren":"🍓","kirsche":"🍒","kirschen":"🍒","traube":"🍇","trauben":"🍇","wassermelone":"🍉","melone":"🍈","orange":"🍊","zitrone":"🍋","limette":"🍋","birne":"🍐","pfirsich":"🍑","ananas":"🍍","mango":"🥭","avocado":"🥑","zucchini":"🥒","aubergine":"🍆","chili":"🌶️","paprika":"🫑","knoblauch":"🧄","bohne":"🫘","bohnen":"🫘","linsen":"🫘","reis":"🍚","nudeln":"🍝","pasta":"🍝","pizza":"🍕","kaffee":"☕","tee":"🍵","saft":"🧃","wasser":"💧","joghurt":"🥣","quark":"🥣","sahne":"🥛","kaese":"🧀","wurst":"🥩","schinken":"🥩","fleisch":"🥩","rind":"🥩","steak":"🥩","haehnchen":"🍗","huhn":"🍗","pute":"🍗","fisch":"🐟","lachs":"🐟","garnele":"🦐","tofu":"🧈","honig":"🍯","marmelade":"🍓","schokolade":"🍫","kuchen":"🍰","keks":"🍪","kekse":"🍪","eis":"🍨","oel":"🫒","olivenoel":"🫒","salz":"🧂","pfeffer":"🧂"};
+const today=()=>{let d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+const uid=()=>`fg-${Date.now().toString(36)}-${Math.random().toString(36).slice(2,8)}`;
+const fresh=()=>({products:starter.map(name=>({id:uid(),name})),stock:starter.map(name=>({id:uid(),name,qty:1,unit:'Stück',expiry:'',added:today(),note:''})),shopping:[],preset:starter.slice(0,5)});
+const load=()=>{try{let d=JSON.parse(localStorage.getItem('fridgeguard_v1'));if(d&&Array.isArray(d.products)&&Array.isArray(d.stock)&&Array.isArray(d.shopping))return d}catch(e){}return fresh()};
+let db=load(),editingId=null;db.consumptionLog=Array.isArray(db.consumptionLog)?db.consumptionLog:[];db.autoRestockRules=Array.isArray(db.autoRestockRules)?db.autoRestockRules:[];
+const save=()=>{checkAutoRestock();try{localStorage.setItem('fridgeguard_v1',JSON.stringify(db))}catch(e){alert('Speichern im Browser ist nicht möglich. Exportiere die Daten als Sicherung.')}renderAll()};
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const dateText=s=>s?new Date(s+'T12:00:00').toLocaleDateString('de-DE'):'Datum fehlt';
+const days=s=>{if(!s)return null;let a=new Date();a.setHours(0,0,0,0);return Math.round((new Date(s+'T00:00:00')-a)/86400000)};
+const status=x=>{let d=days(x.expiry);if(d===null)return{key:'missing',label:'Datum fehlt',cls:'gray'};if(d<=1)return{key:'red',label:d<0?`${Math.abs(d)} Tag(e) überfällig`:d===0?'Heute fällig':'Morgen fällig',cls:'red'};if(d<=3)return{key:'orange',label:`Noch ${d} Tage`,cls:'orange'};return{key:'green',label:`Noch ${d} Tage`,cls:'green'}};
+const icon=n=>{
+ const key=String(n||'').toLocaleLowerCase('de-DE').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ß/g,'ss').replace(/[^a-z0-9]/g,'');
+ if(icons[key])return icons[key];
+ const rules=[
+  [/haehnchen|huhn|pute|gefluegel/,'🍗'],[/kartoffel/,'🥔'],[/zwiebel/,'🧅'],[/karotte|moehre/,'🥕'],[/tomat/,'🍅'],[/gurk|zucchini/,'🥒'],[/paprika/,'🫑'],[/apfel/,'🍎'],[/banan/,'🍌'],[/milch|sahne/,'🥛'],[/butter/,'🧈'],[/ei/,'🥚'],[/kaese/,'🧀'],[/joghurt|quark/,'🥣'],[/brot|toast|baguette/,'🍞'],[/erdbeer/,'🍓'],[/kirsch/,'🍒'],[/traub/,'🍇'],[/orange/,'🍊'],[/zitrone|limette/,'🍋'],[/birne/,'🍐'],[/pfirsich/,'🍑'],[/ananas/,'🍍'],[/mango/,'🥭'],[/avocado/,'🥑'],[/brokkoli|blumenkohl|spinat|salat/,'🥬'],[/mais/,'🌽'],[/pilz|champignon/,'🍄'],[/aubergine/,'🍆'],[/knoblauch/,'🧄'],[/bohne|linse/,'🫘'],[/reis/,'🍚'],[/nudel|pasta/,'🍝'],[/pizza/,'🍕'],[/kaffee/,'☕'],[/tee/,'🍵'],[/saft/,'🧃'],[/wasser/,'💧'],[/fisch|lachs/,'🐟'],[/garnele/,'🦐'],[/fleisch|wurst|schinken|rind|steak/,'🥩'],[/honig/,'🍯'],[/marmelade/,'🍓'],[/schokolade/,'🍫'],[/kuchen/,'🍰'],[/keks/,'🍪'],[/eis/,'🍨'],[/oel|olivenoel/,'🫒'],[/salz|pfeffer/,'🧂']
+ ];
+ const found=rules.find(([pattern])=>pattern.test(key));return found?found[1]:'🥫';
+};
+// Erkennt vorhandene Produktnamen trotz Groß-/Kleinschreibung und einfacher Tippfehler.
+const normalizeName=n=>String(n||'').toLocaleLowerCase('de-DE').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
+function editDistance(a,b){const row=Array.from({length:b.length+1},(_,i)=>i);for(let i=1;i<=a.length;i++){let prev=row[0];row[0]=i;for(let j=1;j<=b.length;j++){const old=row[j];row[j]=Math.min(row[j]+1,row[j-1]+1,prev+(a[i-1]===b[j-1]?0:1));prev=old}}return row[b.length]}
+function findKnownProduct(name){
+ const candidates=[...(db.products||[]).map(p=>p.name),...(db.stock||[]).map(p=>p.name),...(db.shopping||[]).map(p=>p.name),...(db.autoRestockRules||[]).map(p=>p.name)].filter(Boolean);
+ const unique=[...new Map(candidates.map(n=>[normalizeName(n),String(n).trim()])).values()];
+ const normalized=normalizeName(name);if(!normalized)return null;
+ const exact=unique.find(n=>normalizeName(n)===normalized);if(exact)return {name:exact,exact:true};
+ let best=null;
+ for(const candidate of unique){const other=normalizeName(candidate);if(!other)continue;const distance=editDistance(normalized,other);const maxLen=Math.max(normalized.length,other.length);const allowed=maxLen<=4?1:maxLen<=8?2:Math.max(2,Math.floor(maxLen*0.22));if(distance<=allowed&&distance/maxLen<=0.4&&(!best||distance<best.distance))best={name:candidate,exact:false,distance};}
+ return best;
+}
+function confirmProductSpelling(name){const match=findKnownProduct(name);if(!match)return name;if(match.exact)return match.name;const useExisting=confirm('Ein ähnliches Lebensmittel gibt es bereits: „'+match.name+'“.\n\nMöchtest du stattdessen den vorhandenen Namen „'+match.name+'“ verwenden?\n\nOK = vorhandenen Namen verwenden · Abbrechen = nicht hinzufügen.');return useExisting?match.name:null;}
+function tab(id){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('hidden',v.id!==id));document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===id))}
+document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>tab(b.dataset.tab));document.querySelectorAll('[data-goto]').forEach(b=>b.onclick=()=>tab(b.dataset.goto));
+function stats(){let pending=db.shopping.filter(x=>!x.checked).length;document.getElementById('statTotal').textContent=db.stock.length;document.getElementById('statRed').textContent=db.stock.filter(x=>status(x).key==='red').length;document.getElementById('statOrange').textContent=db.stock.filter(x=>status(x).key==='orange').length;document.getElementById('statShopping').textContent=pending;document.getElementById('shoppingCount').textContent=pending?`(${pending})`:''}
+function priority(){let el=document.getElementById('priorityList'),a=db.stock.filter(x=>x.expiry).sort((x,y)=>x.expiry.localeCompare(y.expiry)).slice(0,6);el.innerHTML=a.length?a.map(x=>{let s=status(x);return `<div class="foodrow"><div class="foodicon">${icon(x.name)}</div><div class="foodmain"><strong>${esc(x.name)}</strong><div class="sub">${esc(x.qty)} ${esc(x.unit)} · ${dateText(x.expiry)}</div></div><span class="pill ${s.cls}">${s.label}</span></div>`}).join(''):'<div class="empty">Noch keine Haltbarkeitsdaten eingetragen. Ergänze sie im Inventar.</div>'}
+ function inventory(){let q=document.getElementById('inventorySearch').value.toLowerCase(),f=document.getElementById('inventoryFilter').value;let a=db.stock.filter(x=>x.name.toLowerCase().includes(q)).filter(x=>f==='all'||status(x).key===f).sort((x,y)=>!x.expiry?1:!y.expiry?-1:x.expiry.localeCompare(y.expiry));let el=document.getElementById('inventoryList');el.innerHTML=a.length?a.map(x=>{let s=status(x);return `<div class="foodrow"><input type="checkbox" data-selectstock="${x.id}" aria-label="${esc(x.name)} auswählen" style="width:18px;height:18px;flex:none"><div class="foodicon">${icon(x.name)}</div><div class="foodmain"><strong>${esc(x.name)}</strong><div class="sub">${esc(x.qty)} ${esc(x.unit)} · Datum: ${dateText(x.expiry)}${x.note?' · '+esc(x.note):''}</div><span class="pill ${s.cls}">${s.label}</span></div><div class="actions"><button class="small" data-edit="${x.id}">Bearbeiten</button><button class="small" data-use="${x.id}">− Verbrauch</button><button class="small danger" data-delstock="${x.id}">Löschen</button></div></div>`}).join(''):'<div class="empty">Keine passenden Lebensmittel gefunden.</div>';el.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>editStock(b.dataset.edit));el.querySelectorAll('[data-use]').forEach(b=>b.onclick=()=>consume(b.dataset.use));el.querySelectorAll('[data-delstock]').forEach(b=>b.onclick=()=>deleteStock(b.dataset.delstock));el.querySelectorAll('[data-selectstock]').forEach(b=>{b.checked=selectedStockIds.has(b.dataset.selectstock);b.onchange=()=>{if(b.checked)selectedStockIds.add(b.dataset.selectstock);else selectedStockIds.delete(b.dataset.selectstock);updateBulkControls()}});const all=document.getElementById('selectAllStock');if(all){all.checked=a.length>0&&a.every(x=>selectedStockIds.has(x.id));all.indeterminate=a.some(x=>selectedStockIds.has(x.id))&&!all.checked;all.onchange=()=>{a.forEach(x=>all.checked?selectedStockIds.add(x.id):selectedStockIds.delete(x.id));inventory()}}updateBulkControls()}function shopping(){
+ let el=document.getElementById('shoppingList');
+ el.innerHTML=db.shopping.length?db.shopping.map(x=>`<div class="checkrow ${x.checked?'done':''}" style="flex-wrap:wrap"><input type="checkbox" data-check="${x.id}" ${x.checked?'checked':''}><span class="itemtext">${esc(x.name)}</span><label style="display:flex;align-items:center;gap:6px;margin:0;font-size:12px">Menge <input aria-label="Menge ${esc(x.name)}" data-shopqty="${x.id}" type="number" min="0.01" step="any" value="${esc(x.qty??1)}" style="width:82px;padding:6px"></label><select aria-label="Einheit ${esc(x.name)}" data-shopunit="${x.id}" style="width:100px;padding:6px"><option ${((x.unit||'Stück')==='Stück')?'selected':''}>Stück</option><option ${x.unit==='Packung'?'selected':''}>Packung</option><option ${x.unit==='g'?'selected':''}>g</option><option ${x.unit==='kg'?'selected':''}>kg</option><option ${x.unit==='ml'?'selected':''}>ml</option><option ${x.unit==='l'?'selected':''}>l</option></select><button class="small danger" data-delshop="${x.id}">Entfernen</button></div>`).join(''):'<div class="empty">Deine Einkaufsliste ist leer. Füge Produkte hinzu oder ergänze Standardvorräte.</div>';
+ el.querySelectorAll('[data-check]').forEach(b=>b.onchange=()=>{let x=db.shopping.find(y=>y.id===b.dataset.check);if(x){x.checked=b.checked;save()}});
+ el.querySelectorAll('[data-shopqty]').forEach(b=>b.onchange=()=>{let x=db.shopping.find(y=>y.id===b.dataset.shopqty),v=Number(b.value);if(x&&Number.isFinite(v)&&v>0){x.qty=v;save()}else{alert('Bitte eine Menge größer als 0 eingeben.');shopping()}});
+ el.querySelectorAll('[data-shopunit]').forEach(b=>b.onchange=()=>{let x=db.shopping.find(y=>y.id===b.dataset.shopunit);if(x){x.unit=b.value;save()}});
+ el.querySelectorAll('[data-delshop]').forEach(b=>b.onclick=()=>{db.shopping=db.shopping.filter(x=>x.id!==b.dataset.delshop);save()});
+ let p=db.shopping.filter(x=>!x.checked);document.getElementById('dashboardShopping').innerHTML=p.length?p.slice(0,5).map(x=>`<div class="checkrow"><span class="itemtext">${esc(x.name)} — ${esc(x.qty??1)} ${esc(x.unit||'Stück')}</span></div>`).join(''):'<div class="empty">Keine offenen Einkäufe.</div>';
+}
+function catalog(){let el=document.getElementById('catalogList');el.innerHTML=db.products.length?db.products.slice().sort((a,b)=>a.name.localeCompare(b.name,'de')).map(x=>`<div class="foodrow"><div class="foodicon">${icon(x.name)}</div><div class="foodmain"><strong>${esc(x.name)}</strong><div class="sub">Produkt-Stammdaten</div></div><button class="small" data-addstock="${x.id}">Zum Inventar</button><button class="small danger" data-delproduct="${x.id}">Entfernen</button></div>`).join(''):'<div class="empty">Noch keine Produkte.</div>';el.querySelectorAll('[data-addstock]').forEach(b=>b.onclick=()=>{let p=db.products.find(x=>x.id===b.dataset.addstock);openForm(p.name)});el.querySelectorAll('[data-delproduct]').forEach(b=>b.onclick=()=>{let p=db.products.find(x=>x.id===b.dataset.delproduct);if(p&&confirm(`"${p.name}" aus der Produktliste entfernen? Inventareinträge bleiben erhalten.`)){db.products=db.products.filter(x=>x.id!==b.dataset.delproduct);save()}});document.getElementById('productNames').innerHTML=db.products.map(x=>`<option value="${esc(x.name)}"></option>`).join('')}
+function consumptionLog(){
+ const el=document.getElementById('consumptionLogList');
+ const entries=db.consumptionLog.slice().sort((a,b)=>(b.time||'').localeCompare(a.time||''));
+ el.innerHTML=entries.length?entries.map(x=>`<div class="foodrow"><div class="foodicon">${icon(x.name)}</div><div class="foodmain"><strong>${esc(x.name)}</strong><div class="sub">Verbraucht: ${esc(x.qty)} ${esc(x.unit||'Stück')} · ${x.time?new Date(x.time).toLocaleString('de-DE'):'Zeitpunkt unbekannt'}</div></div></div>`).join(''):'<div class="empty">Noch keine Verbräuche protokolliert. Nutze im Inventar die Schaltfläche „− Verbrauch“, um einen Verbrauch einzutragen.</div>';
+}
+function checkAutoRestock(){
+ db.autoRestockRules=db.autoRestockRules||[];
+ db.shopping=db.shopping||[];
+
+ db.autoRestockRules.forEach(rule=>{
+  const name=String(rule.name||'').trim();
+  const unit=rule.unit||'Stück';
+  const threshold=Number(rule.qty);
+
+  if(!name||!Number.isFinite(threshold)||threshold<0)return;
+
+  const sameName=x=>
+   String(x.name||'').trim().toLocaleLowerCase('de-DE')===
+   name.toLocaleLowerCase('de-DE')&&
+   (x.unit||'Stück')===unit;
+
+  const total=db.stock
+   .filter(sameName)
+   .reduce((sum,x)=>sum+(Number(x.qty)||0),0);
+
+  const needed=Math.max(0,threshold-total);
+
+  const autoItem=db.shopping.find(x=>
+   sameName(x)&&x.autoRestock===true&&!x.checked
+  );
+
+  if(needed>0){
+   if(autoItem){
+    autoItem.qty=needed;
+    autoItem.unit=unit;
+   }else{
+    const existingItem=db.shopping.find(x=>
+     sameName(x)&&!x.checked
+    );
+
+    if(existingItem){
+     existingItem.qty=needed;
+     existingItem.unit=unit;
+    }else{
+     db.shopping.push({
+      id:uid(),
+      name:name,
+      qty:needed,
+      unit:unit,
+      checked:false,
+      autoRestock:true
+     });
+    }
+   }
+  }else{
+   db.shopping=db.shopping.filter(x=>
+    !(sameName(x)&&x.autoRestock===true&&!x.checked)
+   );
+  }
+ });
+}
+function renderAutoRestock(){
+ const el=document.getElementById('autoRestockList');if(!el)return;
+ const rules=db.autoRestockRules||[];
+ el.innerHTML=rules.length?rules.map(r=>`<div class="foodrow"><div class="foodicon">${icon(r.name)}</div><div class="foodmain"><strong>${esc(r.name)}</strong><div class="sub">Einkaufsliste bei ${esc(r.qty)} ${esc(r.unit)} oder weniger</div></div><button class="small danger" type="button" data-delrestock="${esc(r.id)}">Entfernen</button></div>`).join(''):'<div class="empty">Noch keine automatischen Mindestbestände eingerichtet.</div>';
+ el.querySelectorAll('[data-delrestock]').forEach(b=>b.onclick=()=>{db.autoRestockRules=db.autoRestockRules.filter(r=>r.id!==b.dataset.delrestock);save()});
+}
+function saveRestockRule(){
+ let name=document.getElementById('restockName').value.trim();
+ const rawQty=document.getElementById('restockQty').value;
+ const qty=Number(rawQty),unit=document.getElementById('restockUnit').value;
+ if(!name){alert('Bitte zuerst einen Namen für das Standardlebensmittel eingeben.');document.getElementById('restockName').focus();return;}
+ const known=findKnownProduct(name);if(known&&!known.exact){alert('Ein ähnliches Lebensmittel gibt es bereits: „'+known.name+'“. Bitte verwende diesen vorhandenen Namen.');document.getElementById('restockName').focus();return;}if(known&&known.exact)name=known.name;
+ if(rawQty===''||!Number.isFinite(qty)||qty<0){alert('Bitte eine Mindestmenge von 0 oder mehr eingeben.');document.getElementById('restockQty').focus();return;}
+ db.autoRestockRules=db.autoRestockRules||[];
+ const existing=db.autoRestockRules.find(r=>String(r.name||'').trim().toLowerCase()===name.toLowerCase());
+ if(existing){existing.qty=qty;existing.unit=unit;}else{db.autoRestockRules.push({id:uid(),name,qty,unit});}
+ if(!db.products.some(p=>String(p.name||'').toLowerCase()===name.toLowerCase()))db.products.push({id:uid(),name});
+ document.getElementById('restockName').value='';document.getElementById('restockQty').value='1';
+ save();
+ alert('Mindestbestand für „'+name+'“ wurde gespeichert.');
+}
+document.getElementById('saveRestockBtn').addEventListener('click',saveRestockRule);
+document.getElementById('autoRestockForm').addEventListener('submit',e=>{e.preventDefault();saveRestockRule()});
+function renderAll(){stats();priority();inventory();shopping();catalog();consumptionLog();renderAutoRestock();if(typeof translateWholePage==='function')translateWholePage()}
+function openForm(name=''){editingId=null;document.getElementById('stockForm').reset();document.getElementById('stockFormTitle').textContent='Lebensmittel hinzufügen';document.getElementById('stockName').value=name;document.getElementById('stockQty').value=1;document.getElementById('stockAdded').value=today();document.getElementById('stockFormPanel').classList.remove('hidden');document.getElementById('stockFormPanel').scrollIntoView({behavior:'smooth',block:'start'})}
+function editStock(id){let x=db.stock.find(y=>y.id===id);if(!x)return;editingId=id;document.getElementById('stockFormTitle').textContent='Lebensmittel bearbeiten';for(let [k,id2] of Object.entries({name:'stockName',qty:'stockQty',unit:'stockUnit',expiry:'stockExpiry',added:'stockAdded',note:'stockNote'}))document.getElementById(id2).value=x[k]??'';document.getElementById('stockFormPanel').classList.remove('hidden');document.getElementById('stockFormPanel').scrollIntoView({behavior:'smooth',block:'start'})}
+document.getElementById('newStockBtn').onclick=()=>openForm();document.getElementById('cancelStockBtn').onclick=()=>{document.getElementById('stockFormPanel').classList.add('hidden');editingId=null};
+function saveStock(e){
+ if(e) e.preventDefault();
+ const form=document.getElementById('stockForm');
+ if(!form.reportValidity()) return;
+ const name=document.getElementById('stockName').value.trim();
+ const qty=Number(document.getElementById('stockQty').value);
+ const added=document.getElementById('stockAdded').value;
+ const expiry=document.getElementById('stockExpiry').value;
+ if(!name){alert('Bitte einen Lebensmittel-Namen eingeben.');return;}
+ let correctedName=name;
+ if(!editingId){correctedName=confirmProductSpelling(name);if(!correctedName)return;}else{const match=findKnownProduct(name);if(match&&!match.exact){if(!confirm('Ein ähnliches Lebensmittel gibt es bereits: „'+match.name+'“. Soll der Name trotzdem als eigener Produktname gespeichert werden?'))return;}}
+ if(!Number.isFinite(qty)||qty<=0){alert('Bitte eine Menge größer als 0 eingeben.');return;}
+ if(!added){alert('Bitte ein Einlagerungsdatum auswählen.');return;}
+ const o={name:correctedName,qty,unit:document.getElementById('stockUnit').value,expiry,added,note:document.getElementById('stockNote').value.trim()};
+ if(editingId){
+   const existing=db.stock.find(x=>x.id===editingId);
+   if(!existing){alert('Der Eintrag wurde nicht gefunden. Bitte erneut öffnen.');return;}
+   Object.assign(existing,o);
+ } else {
+   db.stock.push({id:uid(),...o});
+ }
+ if(!db.products.some(x=>normalizeName(x.name)===normalizeName(correctedName)))db.products.push({id:uid(),name:correctedName});
+ document.getElementById('stockFormPanel').classList.add('hidden');
+ editingId=null;
+ save();
+ alert('Lebensmittel und Datum wurden gespeichert.');
+}
+ const stockForm=document.getElementById('stockForm');
+ stockForm.addEventListener('submit',saveStock);
+ // Direkter Klick-Handler als Fallback, damit Speichern auch in eingebetteten Browsern reagiert.
+ stockForm.querySelector('button[type="submit"]').addEventListener('click',function(e){e.preventDefault();saveStock(e)});
+ 
+ const selectedStockIds=new Set();
+ function updateBulkControls(){document.querySelectorAll('[data-selectstock]').forEach(b=>{b.checked=selectedStockIds.has(b.dataset.selectstock)});const btn=document.getElementById('bulkConsumeBtn');if(btn){btn.disabled=selectedStockIds.size===0;btn.textContent=selectedStockIds.size?`− Menge für Auswahl ändern (${selectedStockIds.size})`:'− Menge für Auswahl ändern'}const all=document.getElementById('selectAllStock');if(all){const visible=[...document.querySelectorAll('[data-selectstock]')].map(b=>b.dataset.selectstock);all.checked=visible.length>0&&visible.every(id=>selectedStockIds.has(id));all.indeterminate=visible.some(id=>selectedStockIds.has(id))&&!all.checked}}
+ function bulkConsume(){const items=db.stock.filter(x=>selectedStockIds.has(x.id));if(!items.length){alert('Bitte wähle mindestens ein Lebensmittel aus.');return}const old=document.getElementById('bulkConsumeDialog');if(old)old.remove();const wrap=document.createElement('div');wrap.id='bulkConsumeDialog';wrap.style.cssText='position:fixed;inset:0;background:#10251b88;z-index:9999;display:grid;place-items:center;padding:18px';wrap.innerHTML=`<div role="dialog" aria-modal="true" style="background:var(--surface);color:var(--ink);padding:22px;border-radius:16px;width:min(560px,100%);max-height:85vh;overflow:auto;box-shadow:0 12px 45px #0003"><h2 style="margin:0 0 8px">Mehrere Mengen gleichzeitig ändern</h2><p class="muted smalltext">Trage für jedes ausgewählte Lebensmittel ein, wie viel du verbraucht hast. Du kannst unterschiedliche Mengen angeben.</p><div id="bulkConsumeRows">${items.map(x=>`<div style="display:grid;grid-template-columns:minmax(0,1fr) 110px;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)"><div><strong>${esc(x.name)}</strong><div class="sub">Vorhanden: ${esc(x.qty)} ${esc(x.unit||'Stück')}</div></div><label style="margin:0">Verbraucht<input data-bulkqty="${esc(x.id)}" type="number" min="0" max="${esc(x.qty)}" step="any" value="${Math.min(1,Number(x.qty))}" style="margin-top:4px"></label></div>`).join('')}</div><div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:16px"><button type="button" id="bulkConsumeCancel">Abbrechen</button><button type="button" class="primary" id="bulkConsumeSave">Alle Mengen speichern</button></div></div>`;document.body.appendChild(wrap);wrap.querySelector('#bulkConsumeCancel').onclick=()=>wrap.remove();wrap.onclick=e=>{if(e.target===wrap)wrap.remove()};wrap.querySelector('#bulkConsumeSave').onclick=()=>{const inputs=[...wrap.querySelectorAll('[data-bulkqty]')];for(const input of inputs){const x=db.stock.find(y=>y.id===input.dataset.bulkqty),n=Number(input.value);if(!x||!Number.isFinite(n)||n<0||n>Number(x.qty)){alert('Bitte für jedes Lebensmittel eine gültige Menge zwischen 0 und dem vorhandenen Bestand eingeben. 0 bedeutet: nicht verändern.');input.focus();return}}let changed=0;inputs.forEach(input=>{const x=db.stock.find(y=>y.id===input.dataset.bulkqty),n=Number(input.value);if(!x||n<=0)return;db.consumptionLog.push({id:uid(),name:x.name,qty:n,unit:x.unit||'Stück',time:new Date().toISOString()});x.qty=Math.max(0,Number((Number(x.qty)-n).toFixed(4)));changed++;if(x.qty===0){db.stock=db.stock.filter(z=>z.id!==x.id);if(!db.shopping.some(z=>normalizeName(z.name)===normalizeName(x.name)&&!z.checked))db.shopping.push({id:uid(),name:x.name,qty:1,unit:x.unit||'Stück',checked:false})}});items.forEach(x=>selectedStockIds.delete(x.id));wrap.remove();save();alert(`${changed} Lebensmittel-Menge(n) wurden aktualisiert.`)}}
+ document.getElementById('bulkConsumeBtn').addEventListener('click',bulkConsume);
+function consume(id){
+ let x=db.stock.find(y=>y.id===id);if(!x)return;
+ let old=document.getElementById('consumeDialog');if(old)old.remove();
+ const wrap=document.createElement('div');wrap.id='consumeDialog';wrap.style.cssText='position:fixed;inset:0;background:#10251b88;z-index:9999;display:grid;place-items:center;padding:18px';
+ wrap.innerHTML=`<div role="dialog" aria-modal="true" aria-labelledby="consumeTitle" style="background:white;color:#17251f;padding:22px;border-radius:16px;width:min(420px,100%);box-shadow:0 12px 45px #0003"><h2 id="consumeTitle" style="margin:0 0 14px">Verbrauch eintragen</h2><label for="consumeFood">Welches Lebensmittel?</label><select id="consumeFood" style="margin-bottom:12px">${db.stock.map(y=>`<option value="${esc(y.id)}" ${y.id===id?'selected':''}>${esc(y.name)} – vorhanden: ${esc(y.qty)} ${esc(y.unit)}</option>`).join('')}</select><label for="consumeQty">Verbrauchte Menge (vorhanden: <span id="consumeAvailable">${esc(x.qty)} ${esc(x.unit)}</span>)</label><input id="consumeQty" type="number" min="0.01" step="any" value="1" style="margin-bottom:16px"><div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap"><button type="button" id="consumeCancel">Abbrechen</button><button type="button" class="primary" id="consumeConfirm">Verbrauch speichern</button></div></div>`;
+ document.body.appendChild(wrap);
+ const food=wrap.querySelector('#consumeFood'),amount=wrap.querySelector('#consumeQty'),available=wrap.querySelector('#consumeAvailable');
+ food.onchange=()=>{const y=db.stock.find(z=>z.id===food.value);if(y){available.textContent=`${y.qty} ${y.unit}`;amount.max=y.qty;amount.value=Math.min(Number(amount.value)||1,y.qty)}};
+ amount.max=x.qty;wrap.querySelector('#consumeCancel').onclick=()=>wrap.remove();wrap.onclick=e=>{if(e.target===wrap)wrap.remove()};
+ wrap.querySelector('#consumeConfirm').onclick=()=>{const y=db.stock.find(z=>z.id===food.value),n=Number(amount.value);if(!y||!Number.isFinite(n)||n<=0)return alert('Bitte eine gültige Verbrauchsmenge eingeben.');if(n>Number(y.qty))return alert('Die Verbrauchsmenge ist größer als der vorhandene Bestand.');db.consumptionLog.push({id:uid(),name:y.name,qty:n,unit:y.unit||'Stück',time:new Date().toISOString()});y.qty=Math.max(0,Number((y.qty-n).toFixed(4)));if(y.qty===0){db.stock=db.stock.filter(z=>z.id!==y.id);if(!db.shopping.some(z=>z.name.toLowerCase()===y.name.toLowerCase()&&!z.checked))db.shopping.push({id:uid(),name:y.name,checked:false})}wrap.remove();save()};
+}
+function deleteStock(id){let x=db.stock.find(y=>y.id===id);if(x&&confirm(`${x.name} aus dem Inventar löschen?`)){db.stock=db.stock.filter(y=>y.id!==id);save()}}
+function addShop(name){name=name.trim();if(!name)return;const match=findKnownProduct(name);if(match&&!match.exact){alert('Ein ähnliches Lebensmittel gibt es bereits: „'+match.name+'“. Bitte verwende diesen Namen, damit keine Tippfehler in der Einkaufsliste entstehen.');return;}if(match&&match.exact)name=match.name;if(!db.shopping.some(x=>normalizeName(x.name)===normalizeName(name)&&!x.checked))db.shopping.push({id:uid(),name,qty:1,unit:'Stück',checked:false});else alert('„'+name+'“ steht bereits auf der offenen Einkaufsliste.');document.getElementById('shoppingInput').value='';save()}
+document.getElementById('shoppingInputBtn').onclick=()=>addShop(document.getElementById('shoppingInput').value);document.getElementById('shoppingInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addShop(e.target.value)}});document.getElementById('addShoppingBtn').onclick=()=>{document.getElementById('shoppingInput').focus();document.getElementById('shoppingInput').scrollIntoView({behavior:'smooth',block:'center'})};
+document.getElementById('presetBtn').onclick=()=>{(db.preset||starter.slice(0,5)).forEach(name=>{if(!db.stock.some(x=>x.name.toLowerCase()===name.toLowerCase())&&!db.shopping.some(x=>x.name.toLowerCase()===name.toLowerCase()&&!x.checked))db.shopping.push({id:uid(),name,qty:1,unit:'Stück',checked:false})});save()};
+document.getElementById('clearCheckedBtn').onclick=()=>{db.shopping=db.shopping.filter(x=>!x.checked);save()};
+document.getElementById('clearConsumptionLogBtn').onclick=()=>{if(!db.consumptionLog.length)return;if(confirm('Das gesamte Verbrauchsprotokoll leeren?')){db.consumptionLog=[];save()}};
+document.getElementById('purchaseToStockBtn').onclick=()=>{
+ const bought=db.shopping.filter(x=>x.checked);
+ if(!bought.length){alert('Bitte hake zuerst die Produkte ab, die du gekauft hast.');return;}
+ const now=today();
+ bought.forEach(item=>{
+  const name=String(item.name||'').trim(); if(!name)return;
+  const qty=Number(item.qty??1); if(!Number.isFinite(qty)||qty<=0)return;
+  db.stock.push({id:uid(),name,qty,unit:item.unit||'Stück',expiry:'',added:now,note:'Aus Einkaufsliste übernommen'});
+  if(!db.products.some(p=>p.name.toLowerCase()===name.toLowerCase()))db.products.push({id:uid(),name});
+ });
+ const count=bought.length; db.shopping=db.shopping.filter(x=>!x.checked); save(); alert(count+' eingekaufte(r) Eintrag/Einträge wurde(n) ins Inventar übernommen. Bitte Haltbarkeitsdaten dort ergänzen.');
+};
+document.getElementById('catalogAddBtn').onclick=()=>{let input=document.getElementById('catalogInput'),name=input.value.trim();if(!name)return;const match=findKnownProduct(name);if(match){if(match.exact)return alert('Dieses Produkt gibt es bereits: „'+match.name+'“. Bitte verwende den vorhandenen Eintrag.');return alert('Ein ähnliches Produkt gibt es bereits: „'+match.name+'“. Bitte prüfe die Schreibweise. Es wurde nichts hinzugefügt.');}db.products.push({id:uid(),name});input.value='';save()};document.getElementById('catalogInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();document.getElementById('catalogAddBtn').click()}});
+document.getElementById('inventorySearch').addEventListener('input',inventory);document.getElementById('inventoryFilter').addEventListener('change',inventory);
+document.getElementById('exportBtn').onclick=()=>{let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`fridgeguard-daten-${today()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
+document.getElementById('resetBtn').onclick=()=>{if(confirm('Alle lokalen FridgeGuard-Daten löschen und den Starterbestand neu anlegen? Exportiere bei Bedarf vorher eine Sicherung.')){localStorage.removeItem('fridgeguard_v1');db=fresh();save();tab('dashboard')}};
+// Einstellungen: Farbe, Helligkeit, Darstellung und Sprache
+const defaultSettings={accent:'green',brightness:100,theme:'light',language:'de'};
+let settings={...defaultSettings};
+try{settings={...settings,...JSON.parse(localStorage.getItem('fridgeguard_settings')||'{}')}}catch(e){}
+const accentColors={green:['#176b52','#e8f5ef'],blue:['#245f9e','#e8f1fb'],purple:['#7650a8','#f0eafb'],orange:['#b66a0b','#fff0dc'],pink:['#b43d75','#fde8f1']};
+const translations={de:{dashboard:'🏠 Übersicht',inventory:'📦 Inventar',shopping:'🛒 Einkaufsliste',catalog:'🥫 Produktliste',settings:'⚙️ Einstellungen',export:'Daten exportieren',reset:'Zurücksetzen',settingsTitle:'⚙️ Einstellungen',settingsIntro:'Passe das Aussehen von FridgeGuard an. Deine Auswahl wird in diesem Browser gespeichert.',accent:'Akzentfarbe',brightness:'Helligkeit',theme:'Darstellung',light:'Hell',dark:'Dunkel',language:'Sprache',note:'Farbe, Helligkeit und Darstellung ändern sich sofort. Die Spracheinstellung übersetzt Navigation und diesen Einstellungsbereich.',resetSettings:'Einstellungen zurücksetzen'},en:{dashboard:'🏠 Dashboard',inventory:'📦 Inventory',shopping:'🛒 Shopping list',catalog:'🥫 Products',settings:'⚙️ Settings',export:'Export data',reset:'Reset',settingsTitle:'⚙️ Settings',settingsIntro:'Customize the look of FridgeGuard. Your choices are saved in this browser.',accent:'Accent colour',brightness:'Brightness',theme:'Appearance',light:'Light',dark:'Dark',language:'Language',note:'Colour, brightness and appearance update immediately. The language setting translates the navigation and this settings section.',resetSettings:'Reset settings'}};
+const pageWords={
+'🏠 Übersicht':'🏠 Dashboard','📦 Inventar':'📦 Inventory','🛒 Einkaufsliste':'🛒 Shopping list','🥫 Produktliste':'🥫 Products','⚙️ Einstellungen':'⚙️ Settings',
+'Daten exportieren':'Export data','Zurücksetzen':'Reset','Inventareinträge':'Inventory entries','Heute / überfällig':'Due today / overdue','Bald verbrauchen':'Use soon','Offene Einkäufe':'Open shopping items',
+'⏰ Als Nächstes verbrauchen':'⏰ Use next','Inventar öffnen':'Open inventory','Einkaufsliste öffnen':'Open shopping list','💡 Schnellstart':'💡 Quick start',
+'Deine 12 Lebensmittel sind als Starterbestand angelegt. Trage die tatsächlichen Mengen und Haltbarkeitsdaten ein. Bis ein Datum eingetragen ist, zeigt FridgeGuard bewusst keine erfundene Ablaufwarnung an.':'Your 12 foods are included as starter stock. Enter the actual quantities and expiry dates. FridgeGuard will not show an expiry warning until a date has been entered.',
+'Inventar vervollständigen':'Complete inventory','Jeder Eintrag ist eine Packung oder Charge mit eigenem Datum.':'Each entry is a package or batch with its own date.','+ Lebensmittel':'+ Food','Lebensmittel hinzufügen':'Add food','Lebensmittel bearbeiten':'Edit food','Lebensmittel':'Food','Menge':'Quantity','Einheit':'Unit','MHD-/Verbrauchsdatum':'Best-before / use-by date','Eingelagert am':'Date added','Notiz (optional)':'Note (optional)','Speichern':'Save','Abbrechen':'Cancel','Lebensmittel suchen …':'Search foods …','Alle Einträge':'All entries','Datum fehlt':'Date missing','Heute / überfällig':'Due today / overdue','Bald verbrauchen':'Use soon','Noch ausreichend Zeit':'Still plenty of time','Keine passenden Lebensmittel gefunden.':'No matching foods found.','Noch keine Haltbarkeitsdaten eingetragen. Ergänze sie im Inventar.':'No expiry dates entered yet. Add them in the inventory.',
+'🧾 Verbrauchsprotokoll':'🧾 Consumption log','Hier siehst du, welche Lebensmittel du zuletzt verbraucht hast und in welcher Menge.':'Here you can see which foods you recently used and how much.','Protokoll leeren':'Clear log','Noch keine Verbräuche protokolliert. Nutze im Inventar die Schaltfläche „− Verbrauch“, um einen Verbrauch einzutragen.':'No consumption recorded yet. Use the “− Use” button in the inventory to record consumption.',
+'Hake ab, was du gekauft hast.':'Check off the items you bought.','+ Hinzufügen':'+ Add','Produkt für Einkaufsliste …':'Product for shopping list …','Hinzufügen':'Add','Standardvorräte ergänzen':'Add standard supplies','Erledigte entfernen':'Remove completed','Eingekaufte ins Inventar übernehmen':'Move purchased items to inventory','Deine Einkaufsliste ist leer. Füge Produkte hinzu oder ergänze Standardvorräte.':'Your shopping list is empty. Add products or add standard supplies.','Entfernen':'Remove','Zum Inventar':'Add to inventory','Produkt-Stammdaten':'Product details','Noch keine Produkte.':'No products yet.','🥫 Produktliste':'🥫 Products','Stammdaten für häufige Lebensmittel. Eigene Produkte kannst du ergänzen.':'Details for common foods. You can add your own products.','Neues Produkt hinzufügen …':'Add a new product …','Produkt hinzufügen':'Add product','Verbrauch eintragen':'Record consumption','Welches Lebensmittel?':'Which food?','Verbrauchte Menge (vorhanden: ':'Amount used (available: ','Verbrauch speichern':'Save consumption','Die Verbrauchsmenge ist größer als der vorhandene Bestand.':'The amount used is greater than the available stock.','Bitte eine gültige Verbrauchsmenge eingeben.':'Please enter a valid amount to use.','Aus Einkaufsliste übernommen':'Added from shopping list','Mindestbestand speichern':'Save minimum stock','Standardlebensmittel':'Standard food','Mindestmenge':'Minimum quantity','Noch keine automatischen Mindestbestände eingerichtet.':'No automatic minimum stock rules set up yet.','Einkaufsliste bei ':'Add to shopping list at ',' oder weniger':' or less','Passe das Aussehen von FridgeGuard an. Deine Auswahl wird in diesem Browser gespeichert.':'Customize the look of FridgeGuard. Your choices are saved in this browser.','Akzentfarbe':'Accent colour','Helligkeit':'Brightness','Darstellung':'Appearance','Hell':'Light','Dunkel':'Dark','Sprache':'Language','Farbe, Helligkeit und Darstellung ändern sich sofort. Die Spracheinstellung übersetzt Navigation und diesen Einstellungsbereich.':'Colour, brightness and appearance update immediately. The language setting translates the entire page.','Einstellungen zurücksetzen':'Reset settings','⚙️ Einstellungen':'⚙️ Settings','Automatische Einkaufsliste':'Automatic shopping list','Lege Standardlebensmittel und eine Mindestmenge fest. Sobald dein gesamter Bestand dieses Produkts auf diese Menge oder darunter sinkt, wird es automatisch zur Einkaufsliste hinzugefügt.':'Set standard foods and a minimum quantity. When the total stock of a food reaches or falls below this amount, it is automatically added to the shopping list.','z. B. Milch':'e.g. milk','Dein Kühlschrank. Dein Überblick. Weniger Verschwendung.':'Your fridge. Your overview. Less waste.','FridgeGuard-Prototyp · Daten werden lokal in diesem Browser gespeichert. Exportiere regelmäßig eine Sicherung.':'FridgeGuard prototype · Data is stored locally in this browser. Export a backup regularly.',
+'Produkt für Einkaufsliste …':'Product for shopping list …','Datum:':'Date:','Verbraucht:':'Used:','Menge ':'Quantity ','Noch ':'Remaining ',' Tage':' days',' Tag(e) überfällig':' day(s) overdue','Heute fällig':'Due today','Morgen fällig':'Due tomorrow','Keine offenen Einkäufe.':'No open shopping items.'
+};
+const reversePageWords=Object.fromEntries(Object.entries(pageWords).map(([de,en])=>[en,de]));
+function translateWholePage(){
+ const lang=settings.language||'de',dict=lang==='en'?pageWords:reversePageWords;
+ const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
+ nodes.forEach(node=>{let value=node.nodeValue;if(!value||!value.trim())return;let trimmed=value.trim();if(dict[trimmed]){node.nodeValue=value.replace(trimmed,dict[trimmed]);return;}
+  const phrases=lang==='en'?[[/Noch (\d+) Tage/g,'$1 days remaining'],[/Noch (\d+) Tag/g,'$1 day remaining'],[/Einkaufsliste bei /g,'Add to shopping list at '],[/ oder weniger/g,' or less'],[/Datum: /g,'Date: '],[/Verbraucht: /g,'Used: '],[/Tag\(e\) überfällig/g,'day(s) overdue']]:[[/(\d+) days remaining/g,'Noch $1 Tage'],[/Add to shopping list at /g,'Einkaufsliste bei '],[/ or less/g,' oder weniger'],[/Date: /g,'Datum: '],[/Used: /g,'Verbraucht: '],[/day\(s\) overdue/g,'Tag(e) überfällig']];
+  phrases.forEach(([re,repl])=>value=value.replace(re,repl));node.nodeValue=value;
+ });
+ document.querySelectorAll('input[placeholder],input[aria-label],button[title],select[aria-label]').forEach(el=>['placeholder','aria-label','title'].forEach(attr=>{if(el.hasAttribute(attr)){const v=el.getAttribute(attr);if(dict[v])el.setAttribute(attr,dict[v]);else if(lang==='en'){el.setAttribute(attr,v.replace('z. B.','e.g.').replace('Menge ','Quantity ').replace('Einheit ','Unit '))}else{el.setAttribute(attr,v.replace('e.g.','z. B.').replace('Quantity ','Menge ').replace('Unit ','Einheit '))}}}));
+ document.querySelectorAll('option').forEach(el=>{const v=el.textContent.trim();if(dict[v])el.textContent=dict[v]});
+}
+function applySettings(){
+ const color=accentColors[settings.accent]||accentColors.green;
+ document.documentElement.style.setProperty('--g',color[0]);document.documentElement.style.setProperty('--pale',color[1]);
+ const b=Math.max(35,Math.min(100,Number(settings.brightness)||100));
+ document.documentElement.style.setProperty('--bg',settings.theme==='dark'?`hsl(145 15% ${Math.max(7,16*b/100)}%)`:`hsl(140 18% ${Math.max(88,97-(100-b)*0.22)}%)`);
+ document.documentElement.style.setProperty('--surface',settings.theme==='dark'?`hsl(145 14% ${Math.max(10,20*b/100)}%)`:`hsl(0 0% ${Math.max(82,100-(100-b)*0.35)}%)`);
+ document.body.dataset.theme=settings.theme;document.documentElement.lang=settings.language;
+ document.getElementById('accentSetting').value=settings.accent;document.getElementById('brightnessSetting').value=b;document.getElementById('brightnessValue').textContent=b+'%';document.getElementById('themeSetting').value=settings.theme;document.getElementById('languageSetting').value=settings.language;
+ const t=translations[settings.language]||translations.de;
+ document.querySelector('[data-tab="dashboard"]').textContent=t.dashboard;document.querySelector('[data-tab="inventory"]').textContent=t.inventory;document.querySelector('[data-tab="shopping"]').innerHTML=t.shopping+' <span id="shoppingCount"></span>';document.querySelector('[data-tab="catalog"]').textContent=t.catalog;document.querySelector('[data-tab="settings"]').textContent=t.settings;document.getElementById('exportBtn').textContent=t.export;document.getElementById('resetBtn').textContent=t.reset;
+ document.getElementById('settingsTitle').textContent=t.settingsTitle;document.getElementById('settingsIntro').textContent=t.settingsIntro;document.getElementById('accentLabel').textContent=t.accent;document.getElementById('brightnessLabel').textContent=t.brightness;document.getElementById('themeLabel').textContent=t.theme;document.getElementById('languageLabel').textContent=t.language;document.getElementById('settingsNote').textContent=t.note;document.getElementById('settingsResetBtn').textContent=t.resetSettings;
+ const theme=document.getElementById('themeSetting');theme.options[0].text=t.light;theme.options[1].text=t.dark;
+ try{localStorage.setItem('fridgeguard_settings',JSON.stringify(settings))}catch(e){}
+ translateWholePage();
+}
+document.getElementById('accentSetting').addEventListener('change',e=>{settings.accent=e.target.value;applySettings()});
+document.getElementById('brightnessSetting').addEventListener('input',e=>{settings.brightness=Number(e.target.value);applySettings()});
+document.getElementById('themeSetting').addEventListener('change',e=>{settings.theme=e.target.value;applySettings()});
+document.getElementById('languageSetting').addEventListener('change',e=>{settings.language=e.target.value;applySettings();renderAll();translateWholePage()});
+document.getElementById('settingsResetBtn').addEventListener('click',()=>{settings={...defaultSettings};applySettings()});
+applySettings();
+checkAutoRestock();
+renderAll();
+})();
+</script>
+</body></html>
