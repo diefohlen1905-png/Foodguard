@@ -21,7 +21,7 @@ body[data-theme="dark"] button,body[data-theme="dark"] input,body[data-theme="da
  <div id="authFields"><p class="muted smalltext">Melde dich an oder erstelle ein Konto. Deine bisherigen Daten bleiben vorerst lokal in diesem Browser; die Cloud-Synchronisierung bauen wir als nächsten Schritt ein.</p>
   <div class="authgrid"><label>E-Mail-Adresse<input id="authEmail" type="email" autocomplete="email" placeholder="name@beispiel.de"></label><label>Passwort<input id="authPassword" type="password" autocomplete="current-password" minlength="6" placeholder="Mindestens 6 Zeichen"></label></div>
   <div class="form-actions"><button class="primary" id="signInBtn" type="button">Anmelden</button><button id="signUpBtn" type="button">Konto erstellen</button></div>
- </div><div id="authMessage" role="status" aria-live="polite"></div>
+ </div><div id="authMessage" role="status" aria-live="polite"></div><div id="cloudStatus" class="muted smalltext" style="margin-top:8px">Cloud-Synchronisierung noch nicht aktiv.</div>
 </section>
 <nav class="tabs"><button class="tab active" data-tab="dashboard">🏠 Übersicht</button><button class="tab" data-tab="inventory">📦 Inventar</button><button class="tab" data-tab="shopping">🛒 Einkaufsliste <span id="shoppingCount"></span></button><button class="tab" data-tab="catalog">🥫 Produktliste</button><button class="tab" data-tab="settings">⚙️ Einstellungen</button></nav>
 <section id="dashboard" class="view">
@@ -38,7 +38,7 @@ body[data-theme="dark"] button,body[data-theme="dark"] input,body[data-theme="da
 <div class="panel"><h2>🛒 Automatische Einkaufsliste</h2><p class="muted smalltext">Lege Standardlebensmittel und eine Mindestmenge fest. Sobald dein gesamter Bestand dieses Produkts auf diese Menge oder darunter sinkt, wird es automatisch zur Einkaufsliste hinzugefügt.</p>
 <form id="autoRestockForm"><div class="formgrid"><div class="wide"><label for="restockName">Standardlebensmittel</label><input id="restockName" list="productNames" required placeholder="z. B. Milch"></div><div><label for="restockQty">Mindestmenge</label><input id="restockQty" type="number" min="0" step="any" value="1" required></div><div><label for="restockUnit">Einheit</label><select id="restockUnit"><option>Stück</option><option>Packung</option><option>g</option><option>kg</option><option>ml</option><option>l</option></select></div></div><div class="form-actions"><button class="primary" id="saveRestockBtn" type="button">Mindestbestand speichern</button></div></form>
 <div id="autoRestockList"></div></div></section>
-<div class="footer">FridgeGuard-Prototyp · Daten werden lokal in diesem Browser gespeichert. Exportiere regelmäßig eine Sicherung.</div>
+<div class="footer">FoodGuard · Deine Inventar-, Einkaufslisten- und Mindestbestandsdaten werden deinem Konto zugeordnet. Einstellungen bleiben auf diesem Gerät.</div>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -58,7 +58,10 @@ const uid=()=>`fg-${Date.now().toString(36)}-${Math.random().toString(36).slice(
 const fresh=()=>({products:starter.map(name=>({id:uid(),name})),stock:starter.map(name=>({id:uid(),name,qty:1,unit:'Stück',expiry:'',added:today(),note:''})),shopping:[],preset:starter.slice(0,5)});
 const load=()=>{try{let d=JSON.parse(localStorage.getItem('fridgeguard_v1'));if(d&&Array.isArray(d.products)&&Array.isArray(d.stock)&&Array.isArray(d.shopping))return d}catch(e){}return fresh()};
 let db=load(),editingId=null;db.consumptionLog=Array.isArray(db.consumptionLog)?db.consumptionLog:[];db.autoRestockRules=Array.isArray(db.autoRestockRules)?db.autoRestockRules:[];
-const save=()=>{checkAutoRestock();try{localStorage.setItem('fridgeguard_v1',JSON.stringify(db))}catch(e){alert('Speichern im Browser ist nicht möglich. Exportiere die Daten als Sicherung.')}renderAll()};
+let currentUser=null, cloudReady=false, cloudTimer=null, cloudSyncRunning=false, cloudSyncAgain=false;
+const cloudStatus=document.getElementById('cloudStatus');
+function setCloudStatus(message,isError=false){if(cloudStatus){cloudStatus.textContent=message;cloudStatus.style.color=isError?'var(--red)':'var(--muted)'}}
+const save=()=>{checkAutoRestock();try{localStorage.setItem('fridgeguard_v1',JSON.stringify(db))}catch(e){alert('Speichern im Browser ist nicht möglich. Exportiere die Daten als Sicherung.')}renderAll();if(currentUser&&cloudReady)scheduleCloudSync()};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const dateText=s=>s?new Date(s+'T12:00:00').toLocaleDateString('de-DE'):'Datum fehlt';
 const days=s=>{if(!s)return null;let a=new Date();a.setHours(0,0,0,0);return Math.round((new Date(s+'T00:00:00')-a)/86400000)};
@@ -303,20 +306,65 @@ document.getElementById('themeSetting').addEventListener('change',e=>{settings.t
 document.getElementById('languageSetting').addEventListener('change',e=>{settings.language=e.target.value;applySettings();renderAll();translateWholePage()});
 document.getElementById('settingsResetBtn').addEventListener('click',()=>{settings={...defaultSettings};applySettings()});
 
-// Supabase-Anmeldung: Die eigentlichen FoodGuard-Daten bleiben in dieser Version lokal.
+// Supabase-Anmeldung und Cloud-Synchronisierung für Inventar, Einkaufsliste und Mindestbestände.
 const authEmail=document.getElementById('authEmail');
 const authPassword=document.getElementById('authPassword');
 const authMessage=document.getElementById('authMessage');
 const accountStatus=document.getElementById('accountStatus');
 const authFields=document.getElementById('authFields');
 const signOutBtn=document.getElementById('signOutBtn');
-let currentUser=null;
 function showAuthMessage(message,isError=false){authMessage.textContent=message;authMessage.style.color=isError?'var(--red)':'var(--g)'}
 function updateAccountUI(user){
  currentUser=user||null;
  if(user){accountStatus.textContent='Angemeldet als '+user.email;authFields.classList.add('hidden');signOutBtn.classList.remove('hidden')}
  else{accountStatus.textContent='Nicht angemeldet';authFields.classList.remove('hidden');signOutBtn.classList.add('hidden')}
 }
+async function syncFromCloud(){
+ if(!currentUser)return;
+ cloudReady=false;setCloudStatus('Lade deine Daten aus der Cloud …');
+ const userId=currentUser.id;
+ try{
+  const [inv,shop,rules]=await Promise.all([
+   supabaseClient.from('inventory').select('*').eq('user_id',userId),
+   supabaseClient.from('shopping_items').select('*').eq('user_id',userId),
+   supabaseClient.from('restock_rules').select('*').eq('user_id',userId)
+  ]);
+  for(const result of [inv,shop,rules])if(result.error)throw result.error;
+  const remoteHasData=(inv.data||[]).length+(shop.data||[]).length+(rules.data||[]).length>0;
+  if(remoteHasData){
+   db.stock=(inv.data||[]).map(x=>({id:x.id||uid(),name:x.name,qty:Number(x.qty??1),unit:x.unit||'Stück',expiry:x.expiry_date||'',added:x.added||today(),note:x.note||''}));
+   db.shopping=(shop.data||[]).map(x=>({id:x.id||uid(),name:x.name,qty:Number(x.qty??1),unit:x.unit||'Stück',checked:!!x.checked,autoRestock:!!x.auto_restock}));
+   db.autoRestockRules=(rules.data||[]).map(x=>({id:x.id||uid(),name:x.name,qty:Number(x.qty??1),unit:x.unit||'Stück'}));
+   const names=[...db.stock,...db.shopping,...db.autoRestockRules].map(x=>x.name).filter(Boolean);
+   names.forEach(name=>{if(!db.products.some(p=>p.name.toLowerCase()===name.toLowerCase()))db.products.push({id:uid(),name})});
+   localStorage.setItem('fridgeguard_v1',JSON.stringify(db));
+   renderAll();setCloudStatus('Cloud-Synchronisierung aktiv · Daten dieses Kontos geladen.');
+  }else{
+   db.stock=[];db.shopping=[];db.autoRestockRules=[];localStorage.setItem('fridgeguard_v1',JSON.stringify(db));renderAll();
+   setCloudStatus('Cloud-Konto ist leer · wir starten mit leerem Inventar.');
+   cloudReady=true;await syncToCloud();return;
+  }
+  cloudReady=true;
+ }catch(e){cloudReady=false;setCloudStatus('Cloud-Laden fehlgeschlagen: '+(e.message||'Unbekannter Fehler')+'. Lokale Daten bleiben erhalten.',true);}
+}
+async function syncToCloud(){
+ if(!currentUser||!cloudReady)return;
+ if(cloudSyncRunning){cloudSyncAgain=true;return;}
+ cloudSyncRunning=true;setCloudStatus('Synchronisiere …');
+ try{
+  const uid=currentUser.id;
+  const invRows=db.stock.map(x=>({user_id:uid,name:x.name,qty:Number(x.qty??1),unit:x.unit||'Stück',expiry_date:x.expiry||null,added:x.added||today(),note:x.note||''}));
+  const shopRows=db.shopping.map(x=>({user_id:uid,name:x.name,qty:Number(x.qty??1),unit:x.unit||'Stück',checked:!!x.checked,auto_restock:!!x.autoRestock}));
+  const ruleRows=db.autoRestockRules.map(x=>({user_id:uid,name:x.name,qty:Number(x.qty??1),unit:x.unit||'Stück'}));
+  for(const table of ['inventory','shopping_items','restock_rules']){const d=await supabaseClient.from(table).delete().eq('user_id',uid);if(d.error)throw d.error;}
+  if(invRows.length){const r=await supabaseClient.from('inventory').insert(invRows);if(r.error)throw r.error;}
+  if(shopRows.length){const r=await supabaseClient.from('shopping_items').insert(shopRows);if(r.error)throw r.error;}
+  if(ruleRows.length){const r=await supabaseClient.from('restock_rules').insert(ruleRows);if(r.error)throw r.error;}
+  setCloudStatus('Alles synchronisiert · '+new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'}));
+ }catch(e){setCloudStatus('Cloud-Synchronisierung fehlgeschlagen: '+(e.message||'Unbekannter Fehler')+'. Deine lokale Kopie bleibt erhalten.',true);}
+ finally{cloudSyncRunning=false;if(cloudSyncAgain){cloudSyncAgain=false;syncToCloud();}}
+}
+function scheduleCloudSync(){clearTimeout(cloudTimer);cloudTimer=setTimeout(()=>syncToCloud(),700)}
 document.getElementById('signUpBtn').addEventListener('click',async()=>{
  const email=authEmail.value.trim(),password=authPassword.value;
  if(!email||!password){showAuthMessage('Bitte E-Mail-Adresse und Passwort eingeben.',true);return}
@@ -325,7 +373,7 @@ document.getElementById('signUpBtn').addEventListener('click',async()=>{
  try{
   const {data,error}=await supabaseClient.auth.signUp({email,password,options:{emailRedirectTo:'https://diefohlen1905-png.github.io/Foodguard/'}});
   if(error)throw error;
-  if(data.session){updateAccountUI(data.user);showAuthMessage('Dein Konto wurde erstellt und du bist angemeldet.')}
+  if(data.session){updateAccountUI(data.user);showAuthMessage('Dein Konto wurde erstellt und du bist angemeldet.');await syncFromCloud()}
   else{showAuthMessage('Fast geschafft! Öffne die Bestätigungs-E-Mail von Supabase und klicke auf den Bestätigungslink. Danach kommst du zurück zu FoodGuard.')}
  }catch(e){showAuthMessage('Registrierung fehlgeschlagen: '+(e.message||'Unbekannter Fehler'),true)}finally{btn.disabled=false}
 });
@@ -333,16 +381,16 @@ document.getElementById('signInBtn').addEventListener('click',async()=>{
  const email=authEmail.value.trim(),password=authPassword.value;
  if(!email||!password){showAuthMessage('Bitte E-Mail-Adresse und Passwort eingeben.',true);return}
  const btn=document.getElementById('signInBtn');btn.disabled=true;showAuthMessage('Anmeldung läuft …');
- try{const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});if(error)throw error;updateAccountUI(data.user);authPassword.value='';showAuthMessage('Du bist angemeldet. Deine Lebensmittel werden in dieser Version weiterhin lokal gespeichert.')}
+ try{const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});if(error)throw error;updateAccountUI(data.user);authPassword.value='';showAuthMessage('Du bist angemeldet. Deine Daten werden jetzt geladen.');await syncFromCloud()}
  catch(e){showAuthMessage('Anmeldung fehlgeschlagen: '+(e.message||'Unbekannter Fehler'),true)}finally{btn.disabled=false}
 });
 signOutBtn.addEventListener('click',async()=>{
  signOutBtn.disabled=true;
- try{const {error}=await supabaseClient.auth.signOut();if(error)throw error;updateAccountUI(null);showAuthMessage('Du wurdest abgemeldet.')}
+ try{const {error}=await supabaseClient.auth.signOut();if(error)throw error;cloudReady=false;currentUser=null;updateAccountUI(null);setCloudStatus('Nicht angemeldet · Cloud-Synchronisierung pausiert.');showAuthMessage('Du wurdest abgemeldet.')}
  catch(e){showAuthMessage('Abmelden fehlgeschlagen: '+(e.message||'Unbekannter Fehler'),true)}finally{signOutBtn.disabled=false}
 });
-supabaseClient.auth.onAuthStateChange((event,session)=>{updateAccountUI(session?.user||null);if(event==='SIGNED_IN')showAuthMessage('Anmeldung erfolgreich.')});
-(async()=>{try{const {data,error}=await supabaseClient.auth.getSession();if(error)throw error;updateAccountUI(data.session?.user||null)}catch(e){showAuthMessage('Kontostatus konnte nicht geladen werden: '+(e.message||'Unbekannter Fehler'),true)}})();
+supabaseClient.auth.onAuthStateChange((event,session)=>{const user=session?.user||null;updateAccountUI(user);if(event==='SIGNED_OUT'){cloudReady=false;setCloudStatus('Nicht angemeldet · Cloud-Synchronisierung pausiert.')}});
+(async()=>{try{const {data,error}=await supabaseClient.auth.getSession();if(error)throw error;updateAccountUI(data.session?.user||null);if(data.session?.user)await syncFromCloud();else setCloudStatus('Bitte anmelden, um deine Daten geräteübergreifend zu synchronisieren.')}catch(e){showAuthMessage('Kontostatus konnte nicht geladen werden: '+(e.message||'Unbekannter Fehler'),true)}})();
 applySettings();
 checkAutoRestock();
 renderAll();
