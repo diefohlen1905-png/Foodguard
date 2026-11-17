@@ -10,11 +10,19 @@
 body[data-theme="dark"]{--ink:#e8eee9;--muted:#aab8af;--line:#3a4940;--bg:#17201b;--surface:#222e27;--pale:#294337;--redbg:#48292b;--orangebg:#493923}
 body[data-theme="dark"] button,body[data-theme="dark"] input,body[data-theme="dark"] select{background:#2a372f;color:var(--ink);border-color:var(--line)}body[data-theme="dark"] button.primary{background:var(--g);color:#fff}body[data-theme="dark"] .header-actions button{background:#ffffff17;color:#fff;border-color:#ffffff60}body[data-theme="dark"] .note{background:#263d30;color:#c9e4d2}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}header{background:var(--g);color:#fff;padding:20px max(16px,calc((100% - 1080px)/2));display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}.brand{display:flex;align-items:center;gap:12px}.logo{font-size:27px;background:#ffffff20;border-radius:12px;padding:8px}.brand h1{margin:0;font-size:23px}.brand p{margin:2px 0 0;color:#d5eee3;font-size:13px}.header-actions,.tabs,.toolbar,.actions,.form-actions{display:flex;gap:8px;flex-wrap:wrap}button,input,select{font:inherit}button{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:10px;padding:9px 12px;cursor:pointer;font-weight:600}button:hover{filter:brightness(.97)}button.primary{background:var(--g);color:#fff;border-color:var(--g)}button.danger{color:var(--red);border-color:#f0c8ca}button.small{padding:6px 8px;font-size:12px}.header-actions button{background:#ffffff17;color:#fff;border-color:#ffffff60}main{max-width:1080px;margin:22px auto;padding:0 15px 35px}.tabs{margin-bottom:18px}.tab{color:var(--muted)}.tab.active{background:var(--g);color:#fff;border-color:var(--g)}.panel{background:var(--surface);border:1px solid var(--line);border-radius:15px;padding:17px;margin-bottom:15px;box-shadow:0 2px 8px #10251b06}.panel h2{font-size:19px;margin:0 0 12px}.muted{color:var(--muted)}.smalltext{font-size:13px}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin-bottom:15px}.stat{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:14px}.stat .n{font-size:27px;font-weight:750}.stat .label{font-size:13px;color:var(--muted)}.stat.red .n{color:var(--red)}.stat.orange .n{color:var(--orange)}.stat.green .n{color:var(--g)}.grid2{display:grid;grid-template-columns:1.2fr .8fr;gap:15px}.row{display:flex;align-items:center;justify-content:space-between;gap:10px}.foodrow{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid #edf1ee}.foodrow:last-child{border-bottom:0}.foodicon{width:39px;height:39px;display:grid;place-items:center;background:var(--pale);border-radius:11px;font-size:21px;flex-shrink:0}.foodmain{flex:1;min-width:0}.foodmain strong{display:block}.sub{font-size:13px;color:var(--muted)}.pill{display:inline-block;padding:4px 8px;border-radius:99px;font-size:12px;font-weight:700;white-space:nowrap;margin-top:4px}.pill.red{background:var(--redbg);color:var(--red)}.pill.orange{background:var(--orangebg);color:var(--orange)}.pill.green{background:var(--pale);color:var(--g)}.pill.gray{background:#edf0ee;color:#58655f}input,select{width:100%;padding:10px;border:1px solid #cbd8d0;border-radius:9px;background:#fff;color:var(--ink)}.toolbar input,.toolbar select{min-width:150px;flex:1;width:auto}label{font-size:13px;font-weight:650;display:block;margin-bottom:5px}.formgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.formgrid .wide{grid-column:span 2}.form-actions{margin-top:13px}.empty{padding:22px 10px;text-align:center;color:var(--muted);font-size:14px}.note{background:#f0f7f3;border-radius:10px;padding:11px 12px;color:#315e4b;font-size:13px;margin-bottom:13px}.checkrow{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #edf1ee}.checkrow:last-child{border-bottom:0}.checkrow input{width:18px;height:18px;flex:none}.checkrow .itemtext{flex:1}.checkrow.done .itemtext{text-decoration:line-through;color:var(--muted)}.hidden{display:none!important}.footer{text-align:center;color:var(--muted);font-size:12px;margin-top:20px}@media(max-width:700px){header{padding:17px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.grid2{grid-template-columns:1fr}.formgrid{grid-template-columns:1fr 1fr}.formgrid .wide{grid-column:span 2}.panel{padding:14px}.foodrow{align-items:flex-start}.foodrow .actions{flex-direction:column}.pill{font-size:11px}}@media(max-width:420px){.formgrid{grid-template-columns:1fr}.formgrid .wide{grid-column:auto}.brand h1{font-size:20px}}
+#accountPanel{margin-bottom:16px}#accountPanel .authgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}#accountPanel .authgrid label{margin:0}#authMessage{margin-top:10px;font-size:13px;white-space:pre-wrap}#accountStatus{font-weight:650}@media(max-width:520px){#accountPanel .authgrid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <header><div class="brand"><div class="logo">🥬</div><div><h1>FoodGuard</h1><p>Dein Kühlschrank. Dein Überblick. Weniger Verschwendung.</p></div></div><div class="header-actions"><button id="exportBtn">Daten exportieren</button><button id="resetBtn">Zurücksetzen</button></div></header>
 <main>
+<section class="panel" id="accountPanel">
+ <div class="row" style="align-items:flex-start;flex-wrap:wrap"><div><h2>👤 Dein FoodGuard-Konto</h2><div class="muted smalltext" id="accountStatus">Nicht angemeldet</div></div><button id="signOutBtn" type="button" class="hidden">Abmelden</button></div>
+ <div id="authFields"><p class="muted smalltext">Melde dich an oder erstelle ein Konto. Deine bisherigen Daten bleiben vorerst lokal in diesem Browser; die Cloud-Synchronisierung bauen wir als nächsten Schritt ein.</p>
+  <div class="authgrid"><label>E-Mail-Adresse<input id="authEmail" type="email" autocomplete="email" placeholder="name@beispiel.de"></label><label>Passwort<input id="authPassword" type="password" autocomplete="current-password" minlength="6" placeholder="Mindestens 6 Zeichen"></label></div>
+  <div class="form-actions"><button class="primary" id="signInBtn" type="button">Anmelden</button><button id="signUpBtn" type="button">Konto erstellen</button></div>
+ </div><div id="authMessage" role="status" aria-live="polite"></div>
+</section>
 <nav class="tabs"><button class="tab active" data-tab="dashboard">🏠 Übersicht</button><button class="tab" data-tab="inventory">📦 Inventar</button><button class="tab" data-tab="shopping">🛒 Einkaufsliste <span id="shoppingCount"></span></button><button class="tab" data-tab="catalog">🥫 Produktliste</button><button class="tab" data-tab="settings">⚙️ Einstellungen</button></nav>
 <section id="dashboard" class="view">
 <div class="stats"><div class="stat"><div class="n" id="statTotal">0</div><div class="label">Inventareinträge</div></div><div class="stat red"><div class="n" id="statRed">0</div><div class="label">Heute / überfällig</div></div><div class="stat orange"><div class="n" id="statOrange">0</div><div class="label">Bald verbrauchen</div></div><div class="stat green"><div class="n" id="statShopping">0</div><div class="label">Offene Einkäufe</div></div></div>
@@ -294,6 +302,47 @@ document.getElementById('brightnessSetting').addEventListener('input',e=>{settin
 document.getElementById('themeSetting').addEventListener('change',e=>{settings.theme=e.target.value;applySettings()});
 document.getElementById('languageSetting').addEventListener('change',e=>{settings.language=e.target.value;applySettings();renderAll();translateWholePage()});
 document.getElementById('settingsResetBtn').addEventListener('click',()=>{settings={...defaultSettings};applySettings()});
+
+// Supabase-Anmeldung: Die eigentlichen FoodGuard-Daten bleiben in dieser Version lokal.
+const authEmail=document.getElementById('authEmail');
+const authPassword=document.getElementById('authPassword');
+const authMessage=document.getElementById('authMessage');
+const accountStatus=document.getElementById('accountStatus');
+const authFields=document.getElementById('authFields');
+const signOutBtn=document.getElementById('signOutBtn');
+let currentUser=null;
+function showAuthMessage(message,isError=false){authMessage.textContent=message;authMessage.style.color=isError?'var(--red)':'var(--g)'}
+function updateAccountUI(user){
+ currentUser=user||null;
+ if(user){accountStatus.textContent='Angemeldet als '+user.email;authFields.classList.add('hidden');signOutBtn.classList.remove('hidden')}
+ else{accountStatus.textContent='Nicht angemeldet';authFields.classList.remove('hidden');signOutBtn.classList.add('hidden')}
+}
+document.getElementById('signUpBtn').addEventListener('click',async()=>{
+ const email=authEmail.value.trim(),password=authPassword.value;
+ if(!email||!password){showAuthMessage('Bitte E-Mail-Adresse und Passwort eingeben.',true);return}
+ if(password.length<6){showAuthMessage('Das Passwort muss mindestens 6 Zeichen lang sein.',true);return}
+ const btn=document.getElementById('signUpBtn');btn.disabled=true;showAuthMessage('Konto wird erstellt …');
+ try{
+  const {data,error}=await supabaseClient.auth.signUp({email,password,options:{emailRedirectTo:'https://diefohlen1905-png.github.io/Foodguard/'}});
+  if(error)throw error;
+  if(data.session){updateAccountUI(data.user);showAuthMessage('Dein Konto wurde erstellt und du bist angemeldet.')}
+  else{showAuthMessage('Fast geschafft! Öffne die Bestätigungs-E-Mail von Supabase und klicke auf den Bestätigungslink. Danach kommst du zurück zu FoodGuard.')}
+ }catch(e){showAuthMessage('Registrierung fehlgeschlagen: '+(e.message||'Unbekannter Fehler'),true)}finally{btn.disabled=false}
+});
+document.getElementById('signInBtn').addEventListener('click',async()=>{
+ const email=authEmail.value.trim(),password=authPassword.value;
+ if(!email||!password){showAuthMessage('Bitte E-Mail-Adresse und Passwort eingeben.',true);return}
+ const btn=document.getElementById('signInBtn');btn.disabled=true;showAuthMessage('Anmeldung läuft …');
+ try{const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});if(error)throw error;updateAccountUI(data.user);authPassword.value='';showAuthMessage('Du bist angemeldet. Deine Lebensmittel werden in dieser Version weiterhin lokal gespeichert.')}
+ catch(e){showAuthMessage('Anmeldung fehlgeschlagen: '+(e.message||'Unbekannter Fehler'),true)}finally{btn.disabled=false}
+});
+signOutBtn.addEventListener('click',async()=>{
+ signOutBtn.disabled=true;
+ try{const {error}=await supabaseClient.auth.signOut();if(error)throw error;updateAccountUI(null);showAuthMessage('Du wurdest abgemeldet.')}
+ catch(e){showAuthMessage('Abmelden fehlgeschlagen: '+(e.message||'Unbekannter Fehler'),true)}finally{signOutBtn.disabled=false}
+});
+supabaseClient.auth.onAuthStateChange((event,session)=>{updateAccountUI(session?.user||null);if(event==='SIGNED_IN')showAuthMessage('Anmeldung erfolgreich.')});
+(async()=>{try{const {data,error}=await supabaseClient.auth.getSession();if(error)throw error;updateAccountUI(data.session?.user||null)}catch(e){showAuthMessage('Kontostatus konnte nicht geladen werden: '+(e.message||'Unbekannter Fehler'),true)}})();
 applySettings();
 checkAutoRestock();
 renderAll();
