@@ -29,8 +29,18 @@ body[data-theme="dark"] button,body[data-theme="dark"] input,body[data-theme="da
 <div class="grid2"><div class="panel"><div class="row"><h2>⏰ Als Nächstes verbrauchen</h2><button class="small" data-goto="inventory">Inventar öffnen</button></div><div id="priorityList"></div></div><div class="panel"><h2>🛒 Einkaufsliste</h2><div id="dashboardShopping"></div><button class="primary" data-goto="shopping" style="margin-top:12px;width:100%">Einkaufsliste öffnen</button></div></div>
 <div class="panel"><h2>💡 Schnellstart</h2><p class="muted">Deine 12 Lebensmittel sind als Starterbestand angelegt. Trage die tatsächlichen Mengen und Haltbarkeitsdaten ein. Bis ein Datum eingetragen ist, zeigt FridgeGuard bewusst keine erfundene Ablaufwarnung an.</p><button class="primary" data-goto="inventory">Inventar vervollständigen</button></div>
 </section>
-<section id="inventory" class="view hidden"><div class="panel"><div class="row"><div><h2>📦 Inventar</h2><div class="muted smalltext">Jeder Eintrag ist eine Packung oder Charge mit eigenem Datum.</div></div><button class="primary" id="newStockBtn">+ Lebensmittel</button></div><div class="toolbar" style="margin-top:14px"><input id="inventorySearch" placeholder="Lebensmittel suchen …"><select id="inventoryFilter"><option value="all">Alle Einträge</option><option value="missing">Datum fehlt</option><option value="red">Heute / überfällig</option><option value="orange">Bald verbrauchen</option><option value="green">Noch ausreichend Zeit</option></select></div><div class="row" style="margin-top:12px;align-items:center;flex-wrap:wrap"><label style="display:flex;align-items:center;gap:7px;margin:0;font-size:14px"><input id="selectAllStock" type="checkbox" style="width:18px;height:18px"> Alle sichtbaren auswählen</label><button class="primary" id="bulkConsumeBtn" type="button" disabled>− Menge für Auswahl ändern</button></div><div id="inventoryList"></div></div>
+<section id="inventory" class="view hidden"><div class="panel"><div class="row"><div><h2>📦 Inventar</h2><div class="muted smalltext">Jeder Eintrag ist eine Packung oder Charge mit eigenem Datum.</div></div><div class="actions"><button id="scanBarcodeBtn" type="button">📷 Barcode scannen</button><button class="primary" id="newStockBtn">+ Lebensmittel</button></div></div><div class="toolbar" style="margin-top:14px"><input id="inventorySearch" placeholder="Lebensmittel suchen …"><select id="inventoryFilter"><option value="all">Alle Einträge</option><option value="missing">Datum fehlt</option><option value="red">Heute / überfällig</option><option value="orange">Bald verbrauchen</option><option value="green">Noch ausreichend Zeit</option></select></div><div class="row" style="margin-top:12px;align-items:center;flex-wrap:wrap"><label style="display:flex;align-items:center;gap:7px;margin:0;font-size:14px"><input id="selectAllStock" type="checkbox" style="width:18px;height:18px"> Alle sichtbaren auswählen</label><button class="primary" id="bulkConsumeBtn" type="button" disabled>− Menge für Auswahl ändern</button></div><div id="inventoryList"></div></div>
 <div class="panel hidden" id="stockFormPanel"><h2 id="stockFormTitle">Lebensmittel hinzufügen</h2><form id="stockForm"><div class="formgrid"><div class="wide"><label for="stockName">Lebensmittel</label><input id="stockName" list="productNames" required placeholder="z. B. Milch"><datalist id="productNames"></datalist></div><div><label for="stockQty">Menge</label><input id="stockQty" type="number" min="0.01" step="any" value="1" required></div><div><label for="stockUnit">Einheit</label><select id="stockUnit"><option>Stück</option><option>Packung</option><option>g</option><option>kg</option><option>ml</option><option>l</option></select></div><div><label for="stockExpiry">MHD-/Verbrauchsdatum</label><input id="stockExpiry" type="date"></div><div><label for="stockAdded">Eingelagert am</label><input id="stockAdded" type="date" required></div><div class="wide"><label for="stockNote">Notiz (optional)</label><input id="stockNote" placeholder="z. B. geöffnet, obere Ablage"></div></div><div class="form-actions"><button class="primary" type="submit">Speichern</button><button type="button" id="cancelStockBtn">Abbrechen</button></div></form></div>
+
+<div class="panel hidden" id="barcodeScannerPanel">
+  <div class="row" style="align-items:center;flex-wrap:wrap">
+    <div><h2>📷 Lebensmittel scannen</h2><div class="muted smalltext">Richte die Rückkamera auf den EAN-Barcode der Verpackung.</div></div>
+    <button type="button" id="closeBarcodeScannerBtn">Schließen</button>
+  </div>
+  <div id="barcodeReader" style="width:100%;max-width:520px;margin:14px auto"></div>
+  <div id="barcodeScannerStatus" class="note" role="status" aria-live="polite">Kamera wird vorbereitet …</div>
+  <p class="muted smalltext">Tipp: Halte den Barcode ruhig und sorge für ausreichend Licht. Das Mindesthaltbarkeitsdatum wird nicht aus dem Barcode übernommen und muss separat eingetragen werden.</p>
+</div>
 <div class="panel"><div class="row"><div><h2>🧾 Verbrauchsprotokoll</h2><div class="muted smalltext">Hier siehst du, welche Lebensmittel du zuletzt verbraucht hast und in welcher Menge.</div></div><button class="small danger" id="clearConsumptionLogBtn" type="button">Protokoll leeren</button></div><div id="consumptionLogList"></div></div></section>
 <section id="shopping" class="view hidden"><div class="panel"><div class="row"><div><h2>🛒 Einkaufsliste</h2><div class="muted smalltext">Hake ab, was du gekauft hast.</div></div><button class="primary" id="addShoppingBtn">+ Hinzufügen</button></div><div class="toolbar" style="margin-top:14px"><input id="shoppingInput" placeholder="Produkt für Einkaufsliste …"><button id="shoppingInputBtn">Hinzufügen</button><button id="presetBtn">Standardvorräte ergänzen</button></div><div id="shoppingList"></div><div class="form-actions"><button class="danger" id="clearCheckedBtn" type="button">Erledigte entfernen</button><button class="primary" id="purchaseToStockBtn" type="button">Eingekaufte ins Inventar übernehmen</button></div></div></section>
 <section id="catalog" class="view hidden"><div class="panel"><h2>🥫 Produktliste</h2><div class="muted smalltext">Stammdaten für häufige Lebensmittel. Eigene Produkte kannst du ergänzen.</div><div class="toolbar" style="margin-top:14px"><input id="catalogInput" placeholder="Neues Produkt hinzufügen …"><button class="primary" id="catalogAddBtn">Produkt hinzufügen</button></div><div id="catalogList"></div></div></section>
@@ -40,6 +50,7 @@ body[data-theme="dark"] button,body[data-theme="dark"] input,body[data-theme="da
 <div id="autoRestockList"></div></div></section>
 <div class="footer">FoodGuard · Deine Inventar-, Einkaufslisten- und Mindestbestandsdaten werden deinem Konto zugeordnet. Einstellungen bleiben auf diesem Gerät.</div>
 </main>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 (()=> {
@@ -255,6 +266,109 @@ document.getElementById('purchaseToStockBtn').onclick=()=>{
  const count=bought.length; db.shopping=db.shopping.filter(x=>!x.checked); save(); alert(count+' eingekaufte(r) Eintrag/Einträge wurde(n) ins Inventar übernommen. Bitte Haltbarkeitsdaten dort ergänzen.');
 };
 document.getElementById('catalogAddBtn').onclick=()=>{let input=document.getElementById('catalogInput'),name=input.value.trim();if(!name)return;const match=findKnownProduct(name);if(match){if(match.exact)return alert('Dieses Produkt gibt es bereits: „'+match.name+'“. Bitte verwende den vorhandenen Eintrag.');return alert('Ein ähnliches Produkt gibt es bereits: „'+match.name+'“. Bitte prüfe die Schreibweise. Es wurde nichts hinzugefügt.');}db.products.push({id:uid(),name});input.value='';save()};document.getElementById('catalogInput').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();document.getElementById('catalogAddBtn').click()}});
+
+// Barcode-Scanner: nutzt die Handykamera und sucht Produktdaten bei Open Food Facts.
+let foodBarcodeScanner=null;
+let barcodeScanBusy=false;
+const barcodeScannerPanel=document.getElementById('barcodeScannerPanel');
+const barcodeScannerStatus=document.getElementById('barcodeScannerStatus');
+function setBarcodeStatus(message,isError=false){
+ barcodeScannerStatus.textContent=message;
+ barcodeScannerStatus.style.color=isError?'var(--red)':'var(--g)';
+}
+async function stopBarcodeScanner(){
+ if(foodBarcodeScanner){
+  try{
+   const state=foodBarcodeScanner.getState();
+   if(state===Html5QrcodeScannerState.SCANNING)await foodBarcodeScanner.stop();
+  }catch(e){console.warn('Scanner konnte nicht regulär gestoppt werden:',e)}
+  try{foodBarcodeScanner.clear()}catch(e){}
+  foodBarcodeScanner=null;
+ }
+ barcodeScanBusy=false;
+}
+async function closeBarcodeScanner(){
+ await stopBarcodeScanner();
+ barcodeScannerPanel.classList.add('hidden');
+}
+async function startBarcodeScanner(){
+ if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+  alert('Dein Browser unterstützt den Kamerazugriff hier nicht. Öffne FoodGuard bitte über HTTPS in einem aktuellen Browser.');
+  return;
+ }
+ if(typeof Html5Qrcode==='undefined'){
+  alert('Die Scanner-Bibliothek konnte nicht geladen werden. Prüfe bitte deine Internetverbindung und lade FoodGuard neu.');
+  return;
+ }
+ barcodeScannerPanel.classList.remove('hidden');
+ barcodeScannerPanel.scrollIntoView({behavior:'smooth',block:'start'});
+ setBarcodeStatus('Bitte erlaube den Kamerazugriff. Wenn möglich, wird die Rückkamera verwendet.');
+ await stopBarcodeScanner();
+ try{
+  foodBarcodeScanner=new Html5Qrcode('barcodeReader',{
+   formatsToSupport:[
+    Html5QrcodeSupportedFormats.EAN_13,
+    Html5QrcodeSupportedFormats.EAN_8,
+    Html5QrcodeSupportedFormats.UPC_A,
+    Html5QrcodeSupportedFormats.UPC_E
+   ],
+   verbose:false
+  });
+  await foodBarcodeScanner.start(
+   {facingMode:'environment'},
+   {fps:10,qrbox:{width:260,height:150},aspectRatio:1.777},
+   async(decodedText)=>{
+    if(barcodeScanBusy)return;
+    barcodeScanBusy=true;
+    setBarcodeStatus('Barcode '+decodedText+' erkannt. Produktdaten werden gesucht …');
+    await stopBarcodeScanner();
+    await lookupScannedProduct(decodedText);
+   },
+   ()=>{}
+  );
+  setBarcodeStatus('Kamera aktiv. Halte den EAN-Barcode in den markierten Bereich.');
+ }catch(e){
+  await stopBarcodeScanner();
+  setBarcodeStatus('Kamera konnte nicht gestartet werden: '+(e.message||'Bitte Kameraberechtigung prüfen.'),true);
+ }
+}
+async function lookupScannedProduct(barcode){
+ setBarcodeStatus('Suche Produkt '+barcode+' …');
+ try{
+  const response=await fetch('https://world.openfoodfacts.org/api/v2/product/'+encodeURIComponent(barcode)+'.json?fields=product_name,product_name_de,brands,quantity');
+  if(!response.ok)throw new Error('Produktdatenbank ist gerade nicht erreichbar.');
+  const data=await response.json();
+  if(data.status!==1||!data.product){
+   barcodeScannerPanel.classList.add('hidden');
+   openForm('');
+   document.getElementById('stockNote').value='Barcode: '+barcode;
+   alert('Der Barcode wurde erkannt, aber das Produkt ist nicht in Open Food Facts hinterlegt. Bitte gib den Produktnamen manuell ein.');
+   return;
+  }
+  const product=data.product;
+  const name=(product.product_name_de||product.product_name||'').trim();
+  if(!name){
+   barcodeScannerPanel.classList.add('hidden');
+   openForm('');
+   document.getElementById('stockNote').value='Barcode: '+barcode;
+   alert('Der Barcode wurde gefunden, aber es ist kein Produktname hinterlegt. Bitte gib ihn manuell ein.');
+   return;
+  }
+  barcodeScannerPanel.classList.add('hidden');
+  openForm(name);
+  const extra=[product.brands,product.quantity,'Barcode: '+barcode].filter(Boolean).join(' · ');
+  document.getElementById('stockNote').value=extra;
+  setBarcodeStatus('Produkt gefunden: '+name);
+ }catch(e){
+  barcodeScannerPanel.classList.add('hidden');
+  openForm('');
+  document.getElementById('stockNote').value='Barcode: '+barcode;
+  alert('Der Barcode wurde erkannt, aber die Produktabfrage ist fehlgeschlagen: '+(e.message||'Unbekannter Fehler')+'. Bitte gib den Produktnamen manuell ein.');
+ }
+}
+document.getElementById('scanBarcodeBtn').addEventListener('click',startBarcodeScanner);
+document.getElementById('closeBarcodeScannerBtn').addEventListener('click',closeBarcodeScanner);
+
 document.getElementById('inventorySearch').addEventListener('input',inventory);document.getElementById('inventoryFilter').addEventListener('change',inventory);
 document.getElementById('exportBtn').onclick=()=>{let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`fridgeguard-daten-${today()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
 document.getElementById('resetBtn').onclick=()=>{if(confirm('Alle lokalen FridgeGuard-Daten löschen und den Starterbestand neu anlegen? Exportiere bei Bedarf vorher eine Sicherung.')){localStorage.removeItem('fridgeguard_v1');db=fresh();save();tab('dashboard')}};
